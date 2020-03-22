@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Xadrez_console.Board
+namespace color
 {
     enum Color
     {
