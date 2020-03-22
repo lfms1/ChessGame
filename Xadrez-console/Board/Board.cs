@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using piece;
+using position;
 
 namespace board
 {
@@ -20,6 +21,12 @@ namespace board
         public Piece Piece(int line, int column) 
         {
             return Pieces[line, column];
+        }
+
+        public void PlacePiece(Piece piece, Position position) {
+
+            Pieces[position.Row, position.Column] = piece;
+            piece.Position = position;
         }
     }
 }
