@@ -1,5 +1,5 @@
 ﻿using System;
-using Xadrez_console.Board;
+using board;
 
 namespace Xadrez_console
 {
@@ -7,13 +7,8 @@ namespace Xadrez_console
     {
         static void Main(string[] args)
         {
-            Position P;
+            Board board = new Board(8,8);
 
-            P = new Position(3, 4);
-
-            Console.WriteLine("Position: "+ P);
-
-            Console.ReadLine();
         }
     }
 }
