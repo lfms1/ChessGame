@@ -10,7 +10,7 @@ namespace piece
     class Piece
     {
         public Position Position { get; set; }
-        public Color Color { get; protected set; } //Só pode ser alterada por ela própria e por subclasses
+        public Color Color { get; protected set; } 
         public int MovementQuantity { get; protected set; }
         public Board Board { get; protected set; }
 
@@ -22,6 +22,10 @@ namespace piece
             MovementQuantity = 0;
         }
 
+        public void IncrementMovementQuantity() 
+        {
+            MovementQuantity++;
+        }
 
     }
 }

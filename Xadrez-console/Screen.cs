@@ -4,12 +4,13 @@ using piece;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xadrez_console.Chess;
 
 namespace Xadrez_console
 {
     class Screen
     {
-        public static void printBoard(Board board)
+        public static void PrintBoard(Board board)
         {
 
             for (int l = 0; l < board.Lines; l++)
@@ -31,6 +32,16 @@ namespace Xadrez_console
             }
             Console.WriteLine("  a b c d e f g h");
 
+        }
+
+        public static ChessPosition ReadChessPosition() 
+        {
+            string s = Console.ReadLine();
+
+            char column = s[0];
+            int row = int.Parse(s[1] + "");
+
+            return new ChessPosition(column, row);
         }
 
         public static void PrintPiece(Piece piece)

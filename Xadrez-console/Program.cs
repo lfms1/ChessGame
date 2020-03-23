@@ -14,16 +14,21 @@ namespace Xadrez_console
         {
 			try
 			{
-				Board board = new Board(8, 8);
+				ChessMatch chessMatch = new ChessMatch();
+				while (!chessMatch.Finished)
+				{
+					Console.Clear();
+					Screen.PrintBoard(chessMatch.Board);
 
-				board.PlacePiece(new Tower(board, Color.White), new Position(0, 0));
-				board.PlacePiece(new Tower(board, Color.Black), new Position(0, 4));
-				board.PlacePiece(new King(board, Color.White), new Position(5, 4));
-				board.PlacePiece(new King(board, Color.Black), new Position(5, 6));
-				Screen.printBoard(board);
+					Console.WriteLine();
+					Console.Write("Origin:");
+					Position originPosition = Screen.ReadChessPosition().ConvertToPosition();
+					Console.Write("Destiny:");
+					Position destinyPosition = Screen.ReadChessPosition().ConvertToPosition();
+
+					chessMatch.ExecuteMovement(originPosition, destinyPosition);
+				}
 				
-
-				Console.ReadLine();
 			}
 			catch (BoardException e)
 			{
