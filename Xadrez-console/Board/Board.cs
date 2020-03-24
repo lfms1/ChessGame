@@ -9,14 +9,14 @@ namespace board
 {
     class Board
     {
-        public int Lines { get; set; }
+        public int Rows { get; set; }
         public int Columns { get; set; }
         public Piece[,] Pieces;
-        public Board(int lines, int columns)
+        public Board(int rows, int columns)
         {
-            Lines = lines;
+            Rows = rows;
             Columns = columns;
-            Pieces = new Piece[Lines, Columns];
+            Pieces = new Piece[Rows, Columns];
         }
 
         public Piece Piece(Position position) 
@@ -59,7 +59,7 @@ namespace board
 
         public bool ValidPosition(Position position) 
         {
-            if (position.Row >= Lines || position.Column >= Columns || position.Column < 0 || position.Row < 0)
+            if (position.Row >= Rows || position.Column >= Columns || position.Column < 0 || position.Row < 0)
             {
                 return false;
             }

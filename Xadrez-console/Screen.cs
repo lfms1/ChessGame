@@ -13,20 +13,12 @@ namespace Xadrez_console
         public static void PrintBoard(Board board)
         {
 
-            for (int l = 0; l < board.Lines; l++)
+            for (int l = 0; l < board.Rows; l++)
             {
                 Console.Write(8 - l + " ");
                 for (int c = 0; c < board.Columns; c++)
                 {
-                    if (board.Piece(l, c) != null)
-                    {
-                        PrintPiece(board.Piece(l, c));
-                        Console.Write(" ");
-                    }
-                    else
-                    {
-                        Console.Write("- ");
-                    }
+                    PrintPiece(board.Piece(l, c));
                 }
                 Console.WriteLine();
             }
@@ -34,7 +26,34 @@ namespace Xadrez_console
 
         }
 
-        public static ChessPosition ReadChessPosition() 
+        public static void PrintBoard(Board board, bool[,] possiblePositions)
+        {
+            ConsoleColor originalBackgroundColor = Console.BackgroundColor;
+            ConsoleColor customBackgorundColor = ConsoleColor.DarkGray;
+
+            for (int l = 0; l < board.Rows; l++)
+            {
+                Console.Write(8 - l + " ");
+                for (int c = 0; c < board.Columns; c++)
+                {
+                    if (possiblePositions[l, c] == true)
+                    {
+                        Console.BackgroundColor = customBackgorundColor;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = originalBackgroundColor;
+                    }
+                    PrintPiece(board.Piece(l, c));
+                    Console.BackgroundColor = originalBackgroundColor;
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("  a b c d e f g h");
+            Console.BackgroundColor = originalBackgroundColor;
+        }
+
+        public static ChessPosition ReadChessPosition()
         {
             string s = Console.ReadLine();
 
@@ -46,16 +65,24 @@ namespace Xadrez_console
 
         public static void PrintPiece(Piece piece)
         {
-            if (piece.Color == Color.White)
+            if (piece == null)
             {
-                Console.Write(piece);
+                Console.Write("- ");
             }
             else
             {
-                ConsoleColor defaultColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write(piece);
-                Console.ForegroundColor = defaultColor;
+                if (piece.Color == Color.White)
+                {
+                    Console.Write(piece);
+                }
+                else
+                {
+                    ConsoleColor defaultColor = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(piece);
+                    Console.ForegroundColor = defaultColor;
+                }
+                Console.Write(" ");
             }
         }
     }

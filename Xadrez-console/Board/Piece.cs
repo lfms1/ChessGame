@@ -7,7 +7,7 @@ using System.Text;
 
 namespace piece
 {
-    class Piece
+    abstract class Piece
     {
         public Position Position { get; set; }
         public Color Color { get; protected set; } 
@@ -27,5 +27,7 @@ namespace piece
             MovementQuantity++;
         }
 
+        public abstract bool[,] PossibleMovements(); 
+        
     }
 }
