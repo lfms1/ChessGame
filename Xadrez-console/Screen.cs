@@ -18,6 +18,10 @@ namespace Xadrez_console
             Console.WriteLine();
             Console.WriteLine("Turn: " + chessMatch.Turn);
             Console.WriteLine("Player turn: " + chessMatch.ActualPlayer);
+            if (chessMatch.Check)
+            {
+                Console.WriteLine("Check!");
+            }
         }
 
         public static void PrintCapturedPieces(ChessMatch chessMatch) 

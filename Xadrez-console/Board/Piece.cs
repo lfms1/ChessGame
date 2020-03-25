@@ -26,6 +26,10 @@ namespace piece
         {
             MovementQuantity++;
         }
+        public void DecreaseMovementQuantity()
+        {
+            MovementQuantity--;
+        }
 
         public bool existPossibleMovements()
         {

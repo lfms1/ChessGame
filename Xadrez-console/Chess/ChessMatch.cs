@@ -17,18 +17,21 @@ namespace Xadrez_console.Chess
         public bool Finished { get; private set; }
         public HashSet<Piece> Pieces { get; private set; }
         public HashSet<Piece> CapturedPieces { get; private set; }
+        public bool Check { get; private set; }
 
         public ChessMatch()
         {
             Board = new Board(8, 8);
             Turn = 1;
             ActualPlayer = Color.White;
+            Finished = false;
+            Check = false;
             Pieces = new HashSet<Piece>();
             CapturedPieces = new HashSet<Piece>();
             AddingPieces();
         }
 
-        public void ExecuteMovement(Position origin, Position destiny)
+        public Piece ExecuteMovement(Position origin, Position destiny)
         {
             Piece piece = Board.RemovePiece(origin);
             piece.IncrementMovementQuantity();
@@ -39,11 +42,40 @@ namespace Xadrez_console.Chess
             {
                 CapturedPieces.Add(capturedPiece);
             }
+
+            return capturedPiece;
+        }
+
+        public void UndoMovement(Position origin, Position destiny, Piece capturedPiece) 
+        {
+            Piece piece = Board.RemovePiece(destiny);
+            piece.DecreaseMovementQuantity();
+            if (capturedPiece != null)
+            {
+                Board.PlacePiece(capturedPiece, destiny);
+                CapturedPieces.Remove(capturedPiece);
+            }  
+
+            Board.PlacePiece(piece, origin);
+
         }
 
         public void ExecutePlay(Position origin, Position destiny)
         {
-            ExecuteMovement(origin, destiny);
+            Piece capturedPiece = ExecuteMovement(origin, destiny);
+            if (isInCheck(ActualPlayer))
+            {
+                UndoMovement(origin, destiny, capturedPiece);
+                throw new BoardException("You can't put yourself in check");
+            }
+            if (isInCheck(enemyColor(ActualPlayer)))
+            {
+                Check = true;
+            }
+            else
+            {
+                Check = false;
+            }
             Turn++;
             changePlayer();
         }
@@ -111,6 +143,49 @@ namespace Xadrez_console.Chess
 
             aux.ExceptWith(CapturedPieces);
             return aux;
+        }
+
+        private Color enemyColor(Color color)
+        {
+            if (color == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+
+        private Piece getKingByColor(Color color) 
+        {
+            foreach (Piece piece in getInGamePiecesByColor(color))
+            {
+                if (piece is King)
+                {
+                    return piece;
+                }
+            }
+            return null;
+        }
+
+        public bool isInCheck(Color color) 
+        {
+            Piece king = getKingByColor(color);
+            if (king == null)
+            {
+                throw new BoardException("There is no "+ color + "king");
+            }
+            foreach (Piece piece in getInGamePiecesByColor(enemyColor(color)))
+            {
+                bool[,] array = piece.PossibleMovements();
+                if (array[king.Position.Row, king.Position.Column])
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void PlaceNewPiece(char column, int row, Piece piece)
