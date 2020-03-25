@@ -1,5 +1,6 @@
 ﻿using board;
 using color;
+using exceptions;
 using piece;
 using position;
 using System;
@@ -23,7 +24,7 @@ namespace Xadrez_console.Chess
             AddingPieces();
         }
 
-        public void ExecuteMovement(Position origin, Position destiny) 
+        public void ExecuteMovement(Position origin, Position destiny)
         {
             Piece piece = Board.RemovePiece(origin);
             piece.IncrementMovementQuantity();
@@ -31,7 +32,49 @@ namespace Xadrez_console.Chess
             Board.PlacePiece(piece, destiny);
         }
 
-        private void AddingPieces() 
+        public void ExecutePlay(Position origin, Position destiny)
+        {
+            ExecuteMovement(origin, destiny);
+            Turn++;
+            changePlayer();
+        }
+
+        public void ValidOriginPosition(Position position) 
+        {
+            if (Board.Piece(position) == null)
+            {
+                throw new BoardException("There is no piece in that position");
+            }
+            if (!Board.Piece(position).existPossibleMovements())
+            {
+                throw new BoardException("There is no possible moves for this piece");
+            }
+            if (Board.Piece(position).Color != ActualPlayer)
+            {
+                throw new BoardException("That piece isn't yours");
+            }
+        }
+
+        public void ValidDestinyPosition(Position originPosition, Position destinyPosition)
+        {
+            if (!Board.Piece(originPosition).canMoveTo(destinyPosition))
+            {
+                throw new BoardException("Invalid target position");
+            }
+        }
+
+        private void changePlayer() 
+        { 
+            if(ActualPlayer == Color.Black)
+            {
+                ActualPlayer = Color.White;
+            }
+            else 
+            {
+                ActualPlayer = Color.Black;
+            }
+        }
+        private void AddingPieces()
         {
             Board.PlacePiece(new Tower(Board, Color.White), new ChessPosition('c', 1).ConvertToPosition());
             Board.PlacePiece(new Tower(Board, Color.White), new ChessPosition('c', 2).ConvertToPosition());

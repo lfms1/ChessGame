@@ -27,6 +27,24 @@ namespace piece
             MovementQuantity++;
         }
 
+        public bool existPossibleMovements()
+        {
+            bool[,] array = PossibleMovements();
+
+            foreach (var item in array)
+            {
+                if (item == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool canMoveTo(Position position) 
+        {
+            return PossibleMovements()[position.Row, position.Column];
+        }
         public abstract bool[,] PossibleMovements(); 
         
     }

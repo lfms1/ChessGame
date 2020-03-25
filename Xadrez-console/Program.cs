@@ -12,36 +12,50 @@ namespace Xadrez_console
     {
         static void Main(string[] args)
         {
-			try
-			{
-				ChessMatch chessMatch = new ChessMatch();
-				while (!chessMatch.Finished)
-				{
-					Console.Clear();
-					Screen.PrintBoard(chessMatch.Board);
+            try
+            {
+                ChessMatch chessMatch = new ChessMatch();
+                while (!chessMatch.Finished)
+                {
+                    try
+                    {
+                        Console.Clear();
+                        Screen.PrintBoard(chessMatch.Board);
+                        Console.WriteLine();
+                        Console.WriteLine("Turn: " + chessMatch.Turn);
+                        Console.WriteLine("Player turn: " + chessMatch.ActualPlayer);
 
-					Console.WriteLine();
-					Console.Write("Origin:");
-					Position originPosition = Screen.ReadChessPosition().ConvertToPosition();
+                        Console.WriteLine();
+                        Console.Write("Origin:");
+                        Position originPosition = Screen.ReadChessPosition().ConvertToPosition();
+                        chessMatch.ValidOriginPosition(originPosition);
 
-					bool[,] possiblePositions = chessMatch.Board.Piece(originPosition).PossibleMovements();
+                        bool[,] possiblePositions = chessMatch.Board.Piece(originPosition).PossibleMovements();
 
-					Console.Clear();
-					Screen.PrintBoard(chessMatch.Board, possiblePositions);
+                        Console.Clear();
+                        Screen.PrintBoard(chessMatch.Board, possiblePositions);
 
-					Console.WriteLine();
-					Console.Write("Destiny:");
-					Position destinyPosition = Screen.ReadChessPosition().ConvertToPosition();
+                        Console.WriteLine();
+                        Console.Write("Destiny:");
+                        Position destinyPosition = Screen.ReadChessPosition().ConvertToPosition();
+                        chessMatch.ValidDestinyPosition(originPosition, destinyPosition);
 
-					chessMatch.ExecuteMovement(originPosition, destinyPosition);
-				}
-				
-			}
-			catch (BoardException e)
-			{
+                        chessMatch.ExecutePlay(originPosition, destinyPosition);
+                    }
+                    catch (BoardException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.ReadLine();
+                    }
 
-				Console.WriteLine(e.Message);
-			}
+                }
+
+            }
+            catch (BoardException e)
+            {
+
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
