@@ -20,10 +20,7 @@ namespace Xadrez_console
                     try
                     {
                         Console.Clear();
-                        Screen.PrintBoard(chessMatch.Board);
-                        Console.WriteLine();
-                        Console.WriteLine("Turn: " + chessMatch.Turn);
-                        Console.WriteLine("Player turn: " + chessMatch.ActualPlayer);
+                        Screen.PrintMatch(chessMatch);
 
                         Console.WriteLine();
                         Console.Write("Origin:");
