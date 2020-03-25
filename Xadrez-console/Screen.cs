@@ -17,11 +17,20 @@ namespace Xadrez_console
             PrintCapturedPieces(chessMatch);
             Console.WriteLine();
             Console.WriteLine("Turn: " + chessMatch.Turn);
-            Console.WriteLine("Player turn: " + chessMatch.ActualPlayer);
-            if (chessMatch.Check)
+            if (!chessMatch.Finished)
             {
-                Console.WriteLine("Check!");
+                Console.WriteLine("Player turn: " + chessMatch.ActualPlayer);
+                if (chessMatch.Check)
+                {
+                    Console.WriteLine("Check!");
+                }
             }
+            else 
+            {
+                Console.WriteLine("Checkmate!");
+                Console.WriteLine("The winner is "+ chessMatch.ActualPlayer);
+            }
+           
         }
 
         public static void PrintCapturedPieces(ChessMatch chessMatch) 

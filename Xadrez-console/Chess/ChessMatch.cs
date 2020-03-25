@@ -46,7 +46,7 @@ namespace Xadrez_console.Chess
             return capturedPiece;
         }
 
-        public void UndoMovement(Position origin, Position destiny, Piece capturedPiece) 
+        public void UndoMovement(Position origin, Position destiny, Piece capturedPiece)
         {
             Piece piece = Board.RemovePiece(destiny);
             piece.DecreaseMovementQuantity();
@@ -54,7 +54,7 @@ namespace Xadrez_console.Chess
             {
                 Board.PlacePiece(capturedPiece, destiny);
                 CapturedPieces.Remove(capturedPiece);
-            }  
+            }
 
             Board.PlacePiece(piece, origin);
 
@@ -63,12 +63,12 @@ namespace Xadrez_console.Chess
         public void ExecutePlay(Position origin, Position destiny)
         {
             Piece capturedPiece = ExecuteMovement(origin, destiny);
-            if (isInCheck(ActualPlayer))
+            if (IsInCheck(ActualPlayer))
             {
                 UndoMovement(origin, destiny, capturedPiece);
                 throw new BoardException("You can't put yourself in check");
             }
-            if (isInCheck(enemyColor(ActualPlayer)))
+            if (IsInCheck(enemyColor(ActualPlayer)))
             {
                 Check = true;
             }
@@ -76,8 +76,15 @@ namespace Xadrez_console.Chess
             {
                 Check = false;
             }
-            Turn++;
-            changePlayer();
+            if (TestCheckmate(enemyColor(ActualPlayer)))
+            {
+                Finished = true;
+            }
+            else
+            {
+                Turn++;
+                changePlayer();
+            }
         }
 
         public void ValidOriginPosition(Position position)
@@ -157,7 +164,7 @@ namespace Xadrez_console.Chess
             }
         }
 
-        private Piece getKingByColor(Color color) 
+        private Piece getKingByColor(Color color)
         {
             foreach (Piece piece in getInGamePiecesByColor(color))
             {
@@ -169,12 +176,12 @@ namespace Xadrez_console.Chess
             return null;
         }
 
-        public bool isInCheck(Color color) 
+        public bool IsInCheck(Color color)
         {
             Piece king = getKingByColor(color);
             if (king == null)
             {
-                throw new BoardException("There is no "+ color + "king");
+                throw new BoardException("There is no " + color + "king");
             }
             foreach (Piece piece in getInGamePiecesByColor(enemyColor(color)))
             {
@@ -188,6 +195,37 @@ namespace Xadrez_console.Chess
             return false;
         }
 
+        public bool TestCheckmate(Color color)
+        {
+            if (!IsInCheck(color))
+            {
+                return false;
+            }
+            foreach (Piece piece in getInGamePiecesByColor(color))
+            {
+                bool[,] array = piece.PossibleMovements();
+                for (int r = 0; r < Board.Rows; r++)
+                {
+                    for (int c = 0; c < Board.Columns; c++)
+                    {
+                        if (array[r, c])
+                        {
+                            Position origin = piece.Position;
+                            Position destiny = new Position(r, c);
+                            Piece capturedPiece = ExecuteMovement(origin, destiny);
+                            bool testCheck = IsInCheck(color);
+                            UndoMovement(origin, destiny, capturedPiece);
+                            if (!testCheck)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
         public void PlaceNewPiece(char column, int row, Piece piece)
         {
             Board.PlacePiece(piece, new ChessPosition(column, row).ConvertToPosition());
@@ -196,19 +234,27 @@ namespace Xadrez_console.Chess
 
         private void AddingPieces()
         {
+            //PlaceNewPiece('c', 1, new Tower(Board, Color.White));
+            //PlaceNewPiece('c', 2, new Tower(Board, Color.White));
+            //PlaceNewPiece('d', 2, new Tower(Board, Color.White));
+            //PlaceNewPiece('e', 2, new Tower(Board, Color.White));
+            //PlaceNewPiece('e', 1, new Tower(Board, Color.White));
+            //PlaceNewPiece('d', 1, new King(Board, Color.White));
+
+            //PlaceNewPiece('c', 7, new Tower(Board, Color.Black));
+            //PlaceNewPiece('c', 8, new Tower(Board, Color.Black));
+            //PlaceNewPiece('d', 7, new Tower(Board, Color.Black));
+            //PlaceNewPiece('e', 8, new Tower(Board, Color.Black));
+            //PlaceNewPiece('e', 7, new Tower(Board, Color.Black));
+            //PlaceNewPiece('d', 8, new King(Board, Color.Black));
+
+            PlaceNewPiece('a', 8, new King(Board, Color.Black));
+            PlaceNewPiece('b', 8, new Tower(Board, Color.Black));
+
+            PlaceNewPiece('h', 7, new Tower(Board, Color.White));
             PlaceNewPiece('c', 1, new Tower(Board, Color.White));
-            PlaceNewPiece('c', 2, new Tower(Board, Color.White));
-            PlaceNewPiece('d', 2, new Tower(Board, Color.White));
-            PlaceNewPiece('e', 2, new Tower(Board, Color.White));
-            PlaceNewPiece('e', 1, new Tower(Board, Color.White));
             PlaceNewPiece('d', 1, new King(Board, Color.White));
 
-            PlaceNewPiece('c', 7, new Tower(Board, Color.Black));
-            PlaceNewPiece('c', 8, new Tower(Board, Color.Black));
-            PlaceNewPiece('d', 7, new Tower(Board, Color.Black));
-            PlaceNewPiece('e', 8, new Tower(Board, Color.Black));
-            PlaceNewPiece('e', 7, new Tower(Board, Color.Black));
-            PlaceNewPiece('d', 8, new King(Board, Color.Black));
         }
     }
 }
