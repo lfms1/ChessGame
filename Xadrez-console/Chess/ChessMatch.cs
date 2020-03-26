@@ -43,6 +43,26 @@ namespace Xadrez_console.Chess
                 CapturedPieces.Add(capturedPiece);
             }
 
+            // #SpecialMove Short Castling
+            if (piece is King && destiny.Column == origin.Column + 2)
+            {
+                Position originTower = new Position(origin.Row, origin.Column + 3);
+                Position destinyTower = new Position(origin.Row, origin.Column + 1);
+                Piece tower = Board.RemovePiece(originTower);
+                tower.IncrementMovementQuantity();
+                Board.PlacePiece(tower, destinyTower);
+            }
+
+            // #SpecialMove Long Castling
+            if (piece is King && destiny.Column == origin.Column - 2)
+            {
+                Position originTower = new Position(origin.Row, origin.Column - 4);
+                Position destinyTower = new Position(origin.Row, origin.Column - 1);
+                Piece tower = Board.RemovePiece(originTower);
+                tower.IncrementMovementQuantity();
+                Board.PlacePiece(tower, destinyTower);
+            }
+
             return capturedPiece;
         }
 
@@ -58,6 +78,25 @@ namespace Xadrez_console.Chess
 
             Board.PlacePiece(piece, origin);
 
+            // #SpecialMove Short Castling
+            if (piece is King && destiny.Column == origin.Column + 2)
+            {
+                Position originTower = new Position(origin.Row, origin.Column + 3);
+                Position destinyTower = new Position(origin.Row, origin.Column + 1);
+                Piece tower = Board.RemovePiece(destinyTower);
+                tower.DecreaseMovementQuantity();
+                Board.PlacePiece(tower, originTower);
+            }
+
+            // #SpecialMove Long Castling
+            if (piece is King && destiny.Column == origin.Column - 2)
+            {
+                Position originTower = new Position(origin.Row, origin.Column - 4);
+                Position destinyTower = new Position(origin.Row, origin.Column - 1);
+                Piece tower = Board.RemovePiece(destinyTower);
+                tower.DecreaseMovementQuantity();
+                Board.PlacePiece(tower, originTower);
+            }
         }
 
         public void ExecutePlay(Position origin, Position destiny)
@@ -238,7 +277,7 @@ namespace Xadrez_console.Chess
             PlaceNewPiece('b', 1, new Knight(Board, Color.White));
             PlaceNewPiece('c', 1, new Bishop(Board, Color.White));
             PlaceNewPiece('d', 1, new Queen(Board, Color.White));
-            PlaceNewPiece('e', 1, new King(Board, Color.White));
+            PlaceNewPiece('e', 1, new King(Board, Color.White, this));
             PlaceNewPiece('f', 1, new Bishop(Board, Color.White));
             PlaceNewPiece('g', 1, new Knight(Board, Color.White));
             PlaceNewPiece('h', 1, new Tower(Board, Color.White));
@@ -255,7 +294,7 @@ namespace Xadrez_console.Chess
             PlaceNewPiece('b', 8, new Knight(Board, Color.Black));
             PlaceNewPiece('c', 8, new Bishop(Board, Color.Black));
             PlaceNewPiece('d', 8, new Queen(Board, Color.Black));
-            PlaceNewPiece('e', 8, new King(Board, Color.Black));
+            PlaceNewPiece('e', 8, new King(Board, Color.Black, this));
             PlaceNewPiece('f', 8, new Bishop(Board, Color.Black));
             PlaceNewPiece('g', 8, new Knight(Board, Color.Black));
             PlaceNewPiece('h', 8, new Tower(Board, Color.Black));
