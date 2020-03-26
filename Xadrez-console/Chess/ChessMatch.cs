@@ -18,6 +18,7 @@ namespace Xadrez_console.Chess
         public HashSet<Piece> Pieces { get; private set; }
         public HashSet<Piece> CapturedPieces { get; private set; }
         public bool Check { get; private set; }
+        public Piece VulnerableEnPassant { get; private set; }
 
         public ChessMatch()
         {
@@ -26,6 +27,7 @@ namespace Xadrez_console.Chess
             ActualPlayer = Color.White;
             Finished = false;
             Check = false;
+            VulnerableEnPassant = null;
             Pieces = new HashSet<Piece>();
             CapturedPieces = new HashSet<Piece>();
             AddingPieces();
@@ -63,6 +65,25 @@ namespace Xadrez_console.Chess
                 Board.PlacePiece(tower, destinyTower);
             }
 
+            // #Special Move en Passant
+            if (piece is Pawn)
+            {
+                if (origin.Column != destiny.Column && capturedPiece == null)
+                {
+                    Position pawnPosition;
+                    if (piece.Color == Color.White)
+                    {
+                        pawnPosition = new Position(destiny.Row + 1, destiny.Column);
+                    }
+                    else
+                    {
+                        pawnPosition = new Position(destiny.Row - 1, destiny.Column);
+                    }
+                    capturedPiece = Board.RemovePiece(pawnPosition);
+                    CapturedPieces.Add(capturedPiece);
+                }
+            }
+
             return capturedPiece;
         }
 
@@ -97,6 +118,25 @@ namespace Xadrez_console.Chess
                 tower.DecreaseMovementQuantity();
                 Board.PlacePiece(tower, originTower);
             }
+
+            // #Special Move en Passant
+            if (piece is Pawn)
+            {
+                if (origin.Column != destiny.Column && capturedPiece == VulnerableEnPassant)
+                {
+                    Piece pawn = Board.RemovePiece(destiny);
+                    Position pawnPosition;
+                    if (piece.Color == Color.White)
+                    {
+                        pawnPosition = new Position(3, destiny.Column);
+                    }
+                    else
+                    {
+                        pawnPosition = new Position(4, destiny.Column);
+                    }
+                    Board.PlacePiece(pawn, pawnPosition);
+                }
+            }
         }
 
         public void ExecutePlay(Position origin, Position destiny)
@@ -123,6 +163,18 @@ namespace Xadrez_console.Chess
             {
                 Turn++;
                 changePlayer();
+            }
+
+            Piece piece = Board.Piece(destiny);
+
+            //#Special Move en passant
+            if (piece is Pawn && (destiny.Row == origin.Row - 2 || destiny.Row == origin.Row + 2))
+            {
+                VulnerableEnPassant = piece;
+            }
+            else
+            {
+                VulnerableEnPassant = null;
             }
         }
 
@@ -281,14 +333,14 @@ namespace Xadrez_console.Chess
             PlaceNewPiece('f', 1, new Bishop(Board, Color.White));
             PlaceNewPiece('g', 1, new Knight(Board, Color.White));
             PlaceNewPiece('h', 1, new Tower(Board, Color.White));
-            PlaceNewPiece('a', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('b', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('c', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('d', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('e', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('f', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('g', 2, new Pawn(Board, Color.White));
-            PlaceNewPiece('h', 2, new Pawn(Board, Color.White));
+            PlaceNewPiece('a', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('b', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('c', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('d', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('e', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('f', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('g', 2, new Pawn(Board, Color.White, this));
+            PlaceNewPiece('h', 2, new Pawn(Board, Color.White, this));
 
             PlaceNewPiece('a', 8, new Tower(Board, Color.Black));
             PlaceNewPiece('b', 8, new Knight(Board, Color.Black));
@@ -298,14 +350,14 @@ namespace Xadrez_console.Chess
             PlaceNewPiece('f', 8, new Bishop(Board, Color.Black));
             PlaceNewPiece('g', 8, new Knight(Board, Color.Black));
             PlaceNewPiece('h', 8, new Tower(Board, Color.Black));
-            PlaceNewPiece('a', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('b', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('c', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('d', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('e', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('f', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('g', 7, new Pawn(Board, Color.Black));
-            PlaceNewPiece('h', 7, new Pawn(Board, Color.Black));
+            PlaceNewPiece('a', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('b', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('c', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('d', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('e', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('f', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('g', 7, new Pawn(Board, Color.Black, this));
+            PlaceNewPiece('h', 7, new Pawn(Board, Color.Black, this));
         }
     }
 }

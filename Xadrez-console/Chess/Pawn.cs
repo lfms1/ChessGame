@@ -10,10 +10,11 @@ namespace Xadrez_console.Chess
 {
     class Pawn : Piece
     {
-        public Pawn(Board board, Color color)
+        public ChessMatch ChessMatch { get; private set; }
+        public Pawn(Board board, Color color, ChessMatch chessMatch)
             : base(board, color)
         {
-
+            ChessMatch = chessMatch;
         }
 
         public override string ToString()
@@ -21,13 +22,13 @@ namespace Xadrez_console.Chess
             return "P";
         }
 
-        private bool existEnemy(Position position) 
+        private bool existEnemy(Position position)
         {
             Piece piece = Board.Piece(position);
-            return piece != null && piece.Color != Color; 
+            return piece != null && piece.Color != Color;
         }
 
-        private bool isFree(Position position) 
+        private bool isFree(Position position)
         {
             return Board.Piece(position) == null;
         }
@@ -52,7 +53,7 @@ namespace Xadrez_console.Chess
                     array[position.Row, position.Column] = true;
                 }
 
-                position.SetValues(Position.Row - 1, Position.Column -1);
+                position.SetValues(Position.Row - 1, Position.Column - 1);
                 if (Board.ValidPosition(position) && existEnemy(position))
                 {
                     array[position.Row, position.Column] = true;
@@ -62,6 +63,21 @@ namespace Xadrez_console.Chess
                 if (Board.ValidPosition(position) && existEnemy(position))
                 {
                     array[position.Row, position.Column] = true;
+                }
+
+                //Special Move en Passant
+                if (Position.Row == 3)
+                {
+                    Position left = new Position(Position.Row, Position.Column - 1);
+                    if (Board.ValidPosition(left) && existEnemy(left) && Board.Piece(left) == ChessMatch.VulnerableEnPassant)
+                    {
+                        array[left.Row - 1, left.Column] = true;
+                    }
+                    Position right = new Position(Position.Row, Position.Column + 1);
+                    if (Board.ValidPosition(right) && existEnemy(right) && Board.Piece(right) == ChessMatch.VulnerableEnPassant)
+                    {
+                        array[right.Row - 1, right.Column] = true;
+                    }
                 }
             }
             else
@@ -88,6 +104,21 @@ namespace Xadrez_console.Chess
                 if (Board.ValidPosition(position) && existEnemy(position))
                 {
                     array[position.Row, position.Column] = true;
+                }
+
+                //Special Move en Passant
+                if (Position.Row == 4)
+                {
+                    Position left = new Position(Position.Row, Position.Column - 1);
+                    if (Board.ValidPosition(left) && existEnemy(left) && Board.Piece(left) == ChessMatch.VulnerableEnPassant)
+                    {
+                        array[left.Row + 1, left.Column] = true;
+                    }
+                    Position right = new Position(Position.Row, Position.Column + 1);
+                    if (Board.ValidPosition(right) && existEnemy(right) && Board.Piece(right) == ChessMatch.VulnerableEnPassant)
+                    {
+                        array[right.Row + 1, right.Column] = true;
+                    }
                 }
             }
 
